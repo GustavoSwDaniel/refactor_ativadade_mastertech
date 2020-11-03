@@ -1,26 +1,30 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, post_load
+
+from app.user.models import User
 
 
 class UserRegisterSchema(Schema):
+
     id = fields.Integer(dump_only=True)
     nome_completo = fields.String(
         validate=validate.Length(max=255),
-        load_only=True,
         required=True,
-        data_key="nome_compelto",
+        data_key="nome_completo",
     )
     cpf = fields.String(
         validate=validate.Length(11),
         required=True,
-        data_key="password",
+        data_key="cpf",
     )
     email = fields.Email(
         required=True,
-        load_only=True,
+        data_key="email",
     )
-    data_de_cadastro = fields.Date(
-        required=True,
-    )
+    data_de_cadastro = fields.Date()
+
+    @post_load
+    def make_user(self, user, **kwargs):
+        return User(**user)
 
 
 class CheckInSchema(Schema):

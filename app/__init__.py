@@ -13,4 +13,10 @@ def create_app():
     config.init_app(app)
 
     db.init_app(app)
+    migrate.init_app(app, db)
+
+    from app.user import bp as user_bp
+
+    app.register_blueprint(user_bp)
+
     return app
