@@ -3,11 +3,13 @@ from flask import request, jsonify
 from app.user import bp
 from app.user import schemas as user_schemas
 from app.user import service as user_services
+from app.user.models import User
+
+schema = user_schemas.UserSchema()
 
 
 @bp.route("/cadastro", methods=["POST"])
 def register_user():
-    schema = user_schemas.UserRegisterSchema()
     user = schema.load(request.json)
     user_object = user_services.save_user(user)
     return jsonify(schema.dump(user_object)), 201
@@ -15,13 +17,12 @@ def register_user():
 
 @bp.route("/users", methods=["GET"])
 def list_users():
-    user_list = user_services.show_user()
-    print(user_list)
+    return jsonify([schema.dump(User) for User in User.query.all()]), 200
 
 
 @bp.route("/user/<int:user_id>", methods=["GET"])
 def find_user(user_id):
-    ...
+    return jsonify(schema.dump(user_services.find_user(user_id)))
 
 
 @bp.route("/updade/<int:user_id>", methods=["PUT"])

@@ -1,8 +1,6 @@
-from flask import jsonify
-
 from app import db
 from app.user.models import User
-from datetime import date
+from app.user.schemas import UserSchema
 
 
 def save_user(user: User) -> User:
@@ -13,4 +11,12 @@ def save_user(user: User) -> User:
 
 
 def show_user():
-    return [jsonify(User) for User in User.query.all()]
+    userSchema = UserSchema()
+    return [userSchema.dump(User) for User in User.query.all()]
+
+
+def find_user(id_user):
+    user = User.query.filter_by(id_user=id_user).first()
+    if user:
+        return user, 200
+    return "User not Found", 404

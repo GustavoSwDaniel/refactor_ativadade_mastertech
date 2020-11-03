@@ -3,9 +3,9 @@ from marshmallow import Schema, fields, validate, post_load
 from app.user.models import User
 
 
-class UserRegisterSchema(Schema):
+class UserSchema(Schema):
 
-    id = fields.Integer(dump_only=True)
+    id_user = fields.Integer(data_key="id")
     nome_completo = fields.String(
         validate=validate.Length(max=255),
         required=True,
