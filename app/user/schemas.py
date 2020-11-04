@@ -5,7 +5,7 @@ from app.user.models import User
 
 class UserSchema(Schema):
 
-    id_user = fields.Integer(data_key="id")
+    id_user = fields.Integer(data_key="id", dump_only=True)
     nome_completo = fields.String(
         validate=validate.Length(max=255),
         required=True,
@@ -20,7 +20,7 @@ class UserSchema(Schema):
         required=True,
         data_key="email",
     )
-    data_de_cadastro = fields.Date()
+    data_de_cadastro = fields.Date(dump_only=True)
 
     @post_load
     def make_user(self, user, **kwargs):

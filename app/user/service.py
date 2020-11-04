@@ -1,6 +1,6 @@
+from datetime import date
 from app import db
 from app.user.models import User
-from app.user.schemas import UserSchema
 
 
 def save_user(user: User) -> User:
@@ -10,13 +10,32 @@ def save_user(user: User) -> User:
     return user
 
 
-def show_user():
-    userSchema = UserSchema()
-    return [userSchema.dump(User) for User in User.query.all()]
+def find_user(id_user: int):
+    return User.query.filter_by(id_user=id_user).first()
 
 
-def find_user(id_user):
-    user = User.query.filter_by(id_user=id_user).first()
-    if user:
-        return user, 200
-    return "User not Found", 404
+def find_exist_user_cpf(cpf: str) -> bool:
+    verificacao = User.query.filter_by(cpf=cpf).first()
+    if verificacao:
+        return False
+    return True
+
+
+def delete_user(id_user: int) -> bool:
+    user_found = find_user(id_user)
+    if user_found:
+        db.session.delete(user_found)
+        db.session.commit()
+        return True
+    return False
+
+
+def updade_user(id_user: int, field: dict):
+    if len(field) <= 3:
+        user_found = find_user(id_user)
+        print(user_found)
+        if user_found:
+            db.session.commit()
+            return True
+        return False
+    return False
