@@ -25,15 +25,3 @@ class UserSchema(Schema):
     @post_load
     def make_user(self, user, **kwargs):
         return User(**user)
-
-
-class CheckInSchema(Schema):
-    id_point = fields.Integer(dump_only=True)
-    usuario_responsavel = fields.String(
-        validate=validate.Length(max=255), required=True
-    )
-    tipo_da_batida = fields.String(required=True)
-    data_hora_batida = fields.DateTime(
-        required=True,
-    )
-    id_user = fields.Integer(required=True)

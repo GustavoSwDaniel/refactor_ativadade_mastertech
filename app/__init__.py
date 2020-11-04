@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-import config
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -10,7 +9,8 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    config.init_app(app)
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///banco.db"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -18,5 +18,9 @@ def create_app():
     from app.user import bp as user_bp
 
     app.register_blueprint(user_bp)
+
+    from app.checks import bp as check_bp
+
+    app.register_blueprint(check_bp)
 
     return app

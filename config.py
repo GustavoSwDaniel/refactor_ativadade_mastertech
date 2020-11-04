@@ -1,12 +1,3 @@
-def init_app(app):
-    if app.debug:
-        app.config["DEBUG_TB_TEMPLATE_EDITOR_ENABLED"] = True
-        app.config["DEBUG_TB_PROFILER_ENABLED"] = True
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///banco.db"
-        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        app.config["SQLALCHEMY_ECHO"] = True
-
-
 """class Config:
 
     SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/banco.db"
