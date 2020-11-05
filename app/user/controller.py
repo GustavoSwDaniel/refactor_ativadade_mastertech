@@ -37,7 +37,14 @@ def find_user(user_id):
 
 @bp.route("/updade/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
-    ...
+    scheme_update = user_schemas.UpdateUserSchema()
+    update = scheme_update.load(request.json)
+
+    confirmation = user_services.updade_user(user_id, update)
+
+    if confirmation:
+        return jsonify(scheme_update.dump(confirmation))
+    return {"message": "User not Found"}, 404
 
 
 @bp.route("/delete/<int:user_id>", methods=["DELETE"])

@@ -25,3 +25,18 @@ class UserSchema(Schema):
     @post_load
     def make_user(self, user, **kwargs):
         return User(**user)
+
+
+class UpdateUserSchema(Schema):
+    nome_completo = fields.String(
+        validate=validate.Length(max=255),
+        data_key="nome_completo",
+    )
+
+    cpf = fields.String(
+        validate=validate.Length(11),
+        data_key="cpf",
+    )
+    email = fields.Email(
+        data_key="email",
+    )

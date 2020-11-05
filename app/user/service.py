@@ -10,13 +10,13 @@ def save_user(user: User) -> User:
     return user
 
 
-def find_user(id_user: int):
+def find_user(id_user: int) -> User:
     return User.query.filter_by(id_user=id_user).first()
 
 
 def find_exist_user_cpf(cpf: str) -> bool:
-    verificacao = User.query.filter_by(cpf=cpf).first()
-    if verificacao:
+    verification = User.query.filter_by(cpf=cpf).first()
+    if verification:
         return False
     return True
 
@@ -31,4 +31,16 @@ def delete_user(id_user: int) -> bool:
 
 
 def updade_user(id_user: int, update: dict):
-    ...
+    user_found = find_user(id_user)
+
+    if user_found:
+        for key, value in update.items():
+            if key == "nome_completo":
+                user_found.nome_completo = value
+            elif key == "email":
+                user_found.email = value
+            elif key == "cpf":
+                user_found.cpf = value
+        db.session.commit()
+        return user_found
+    return False

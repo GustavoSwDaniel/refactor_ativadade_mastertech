@@ -11,3 +11,8 @@ class User(db.Model):
     email = db.Column(db.String(50))
     data_de_cadastro = db.Column(db.Date)
     checkInUser = db.relationship("CheckIn", backref="users", lazy=True)
+
+    def __init__(self, name, email, cpf):
+        self.name = name
+        self.email = email
+        self.cpf = cpf
