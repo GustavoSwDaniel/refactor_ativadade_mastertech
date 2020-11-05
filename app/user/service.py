@@ -30,12 +30,5 @@ def delete_user(id_user: int) -> bool:
     return False
 
 
-def updade_user(id_user: int, field: dict):
-    if len(field) <= 3:
-        user_found = find_user(id_user)
-        print(user_found)
-        if user_found:
-            db.session.commit()
-            return True
-        return False
-    return False
+def updade_user(id_user: int, update: dict):
+    ...

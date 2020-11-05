@@ -11,21 +11,31 @@ schema = check_schemas.CheckSchema()
 
 @bp.route("/point/<int:user_id>", methods=["POST"])
 def check_point(user_id):
-    try:
-        check = schema.load(request.json)
+
+    check = schema.load(request.json)
+    check_user = schema.dump(check)
+    check_user["tipo_da_batida"]
+    validate = check_services.validadete_entrada(
+        check_user["tipo_da_batida"],
+        user_id,
+    )
+    if validate:
         check = check_services.register_check_User(user_id, check)
         if check:
             return jsonify(schema.dump(check)), 201
         return {"message": "User not found"}, 404
-    except Exception:
-        return {"message": "error"}, 404
+    return {"message": "<Tipo de Entrada> repeated"}, 400
 
 
 @bp.route("/checks/<int:user_id>", methods=["GET"])
 def list_checks(user_id):
-    return jsonify(
-        [
-            schema.dump(check)
-            for check in CheckIn.query.filter_by(user_id=user_id).all()
-        ],
-    )
+    check_hours = check_services.worked_hour(user_id)
+    if check_hours:
+        return jsonify(
+            {"Total de Horas trabalhadas": check_hours},
+            [
+                schema.dump(check)
+                for check in CheckIn.query.filter_by(user_id=user_id).all()
+            ],
+        )
+    return {"message": "User not found"}, 404

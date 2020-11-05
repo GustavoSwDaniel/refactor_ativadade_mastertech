@@ -37,11 +37,7 @@ def find_user(user_id):
 
 @bp.route("/updade/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
-    up_user = request.json
-    test = user_services.updade_user(user_id, up_user)
-    if test:
-        return "teste"
-    return "bad"
+    ...
 
 
 @bp.route("/delete/<int:user_id>", methods=["DELETE"])
