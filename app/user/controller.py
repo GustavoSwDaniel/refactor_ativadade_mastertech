@@ -11,15 +11,8 @@ schema = user_schemas.UserSchema()
 @bp.route("/cadastro", methods=["POST"])
 def register_user():
     user = schema.load(request.json)
-    validation_unique_cpf = user_services.find_exist_user_cpf(cpf=user.cpf)
-    if validation_unique_cpf:
-        try:
-            user_object = user_services.save_user(user)
-            return jsonify(schema.dump(user_object)), 201
-        except Exception:
-            return "Internal Error", 500
-
-    return {"message": "CPF already registered"}, 404
+    services = user_services.register_user(user)
+    return services
 
 
 @bp.route("/users", methods=["GET"])
@@ -30,26 +23,18 @@ def list_users():
 @bp.route("/user/<int:user_id>", methods=["GET"])
 def find_user(user_id):
     user = user_services.find_user(user_id)
-    if user:
-        return jsonify(schema.dump(user)), 200
-    return {"message": "User not Found"}, 404
+    return user
 
 
 @bp.route("/updade/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     scheme_update = user_schemas.UpdateUserSchema()
     update = scheme_update.load(request.json)
-
     confirmation = user_services.updade_user(user_id, update)
-
-    if confirmation:
-        return jsonify(scheme_update.dump(confirmation))
-    return {"message": "User not Found"}, 404
+    return confirmation
 
 
 @bp.route("/delete/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     status_delete = user_services.delete_user(user_id)
-    if status_delete:
-        return {"message": "User successfully deleted"}, 200
-    return {"message": "User not Found"}, 404
+    return status_delete
