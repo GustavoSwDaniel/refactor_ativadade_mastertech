@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, validate, post_load
 
 from app.user.models import User
+from app.helpers.validade import ValidateCPF
 
 
 class UserSchema(Schema):
@@ -12,9 +13,7 @@ class UserSchema(Schema):
         data_key="nome_completo",
     )
     cpf = fields.String(
-        validate=validate.Length(11),
-        required=True,
-        data_key="cpf",
+        validate=ValidateCPF,
     )
     email = fields.Email(
         required=True,

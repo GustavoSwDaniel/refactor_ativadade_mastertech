@@ -23,4 +23,8 @@ def create_app():
 
     app.register_blueprint(check_bp)
 
+    from app.commons import bp as common_bp
+
+    app.register_blueprint(common_bp)
+
     return app

@@ -1,4 +1,6 @@
 from flask import request, jsonify
+from werkzeug.exceptions import abort
+
 
 from app.user import bp
 from app.user import schemas as user_schemas
@@ -10,7 +12,11 @@ schema = user_schemas.UserSchema()
 
 @bp.route("/cadastro", methods=["POST"])
 def register_user():
+
     user = schema.load(request.json)
+    if user_services.find_exist_user_cpf(cpf=user.cpf):
+        abort(400, "CPF already in use")
+
     services = user_services.register_user(user)
     return services
 

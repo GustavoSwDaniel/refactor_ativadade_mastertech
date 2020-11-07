@@ -1,5 +1,7 @@
 from datetime import datetime
+
 from flask import jsonify
+
 from app import db
 from app.checks.models import CheckIn
 from app.user.service import find_user
@@ -69,7 +71,6 @@ def calculate_hours(work_hours: list) -> str:
 def validadete_check(type_point: str, id_user: int) -> bool:
 
     last_check = read_checks_dada(id_user)
-    print(last_check)
     if last_check:
         last_check = last_check[-1]
         if last_check["tipo_da_batida"] == "Saida" and type_point == "Saida":

@@ -1,26 +1,22 @@
-from flask import jsonify
+import re
 from datetime import date
 
-import re
+from flask import jsonify
+
 from app import db
 from app.user.models import User
 from app.user import schemas as user_schemas
-
 
 schema = user_schemas.UserSchema()
 
 
 def register_user(user: list):
-    validation_cpf = ValidateCPF(user.cpf)
-    if find_exist_user_cpf(cpf=user.cpf):
-        if validation_cpf.validation():
-            try:
-                user_object = save_user(user)
-                return jsonify(schema.dump(user_object))
-            except Exception:
-                return {"message": "Internal Error"}, 500
-            return {"message": "CPF invalid"}, 404
-    return {"message": "CPF already registered"}, 404
+    user.cpf = format_cpf(user.cpf)
+    try:
+        user_object = save_user(user)
+        return jsonify(schema.dump(user_object))
+    except Exception:
+        return {"message": "Internal Error"}, 500
 
 
 def search_user(id_user: int) -> User:
@@ -32,20 +28,6 @@ def save_user(user: User) -> User:
     db.session.add(user)
     db.session.commit()
     return user
-
-
-def find_user(id_user: int) -> User:
-    user = search_user(id_user)
-    if user:
-        return jsonify(schema.dump(user)), 200
-    return {"message": "User not Found"}, 404
-
-
-def find_exist_user_cpf(cpf: str) -> bool:
-    verification = User.query.filter_by(cpf=cpf).first()
-    if verification:
-        return False
-    return True
 
 
 def delete_user(id_user: int) -> bool:
@@ -74,46 +56,18 @@ def updade_user(id_user: int, update: dict):
     return {"message": "User not Found"}, 404
 
 
-class ValidateCPF:
-    def __init__(self, cpf):
-        self.cpf = cpf
+def find_exist_user_cpf(cpf: str) -> bool:
+    return db.session.query(
+        User.query.filter_by(cpf=format_cpf(cpf)).exists(),
+    ).scalar()
 
-    def validation(self):
-        if not self.cpf:
-            return False
 
-        new_cpf = self._calcula_digitos(self.cpf[:9])
-        new_cpf = self._calcula_digitos(new_cpf)
+def format_cpf(cpf):
+    return re.sub("[^0-9]", "", cpf)
 
-        if new_cpf == self.cpf:
-            return True
-        return False
 
-    @staticmethod
-    def _calcula_digitos(cpf):
-        if not cpf:
-            return False
-
-        sequence = cpf[0] * len(cpf)
-
-        if sequence == cpf:
-            return False
-        soma = 0
-        for key, multiplier in enumerate(range(len(cpf) + 1, 1, -1)):
-            soma += int(cpf[key]) * multiplier
-
-        rest = 11 - (soma % 11)
-        rest = rest if rest <= 9 else 0
-        return cpf + str(rest)
-
-    @property
-    def cpf(self):
-        return self._cpf
-
-    @cpf.setter
-    def cpf(self, cpf):
-        self._cpf = self._clear_cpf(cpf)
-
-    @staticmethod
-    def _clear_cpf(cpf):
-        return re.sub("[^0-9]", "", cpf)
+def find_user(id_user: int) -> User:
+    user = search_user(id_user)
+    if user:
+        return jsonify(schema.dump(user)), 200
+    return {"message": "User not Found"}, 404
