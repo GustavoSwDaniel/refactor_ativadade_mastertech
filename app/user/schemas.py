@@ -6,11 +6,11 @@ from app.helpers.validade import ValidateCPF
 
 class UserSchema(Schema):
 
-    id_user = fields.Integer(data_key="id", dump_only=True)
-    nome_completo = fields.String(
+    id = fields.Integer(data_key="id", dump_only=True)
+    full_name = fields.String(
         validate=validate.Length(max=255),
         required=True,
-        data_key="nome_completo",
+        data_key="full_name",
     )
     cpf = fields.String(
         validate=ValidateCPF,
@@ -19,7 +19,7 @@ class UserSchema(Schema):
         required=True,
         data_key="email",
     )
-    data_de_cadastro = fields.Date(dump_only=True)
+    registration_date = fields.Date(dump_only=True)
 
     @post_load
     def make_user(self, user, **kwargs):
@@ -27,9 +27,9 @@ class UserSchema(Schema):
 
 
 class UpdateUserSchema(Schema):
-    nome_completo = fields.String(
+    full_name = fields.String(
         validate=validate.Length(max=255),
-        data_key="nome_completo",
+        data_key="full_name",
     )
 
     cpf = fields.String(

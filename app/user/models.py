@@ -4,10 +4,10 @@ from app import db
 class User(db.Model):
     __tablename__ = "users"
 
-    id_user = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    nome_completo = db.Column(db.String(255))
+    full_name = db.Column(db.String(255))
     cpf = db.Column(db.String(11))
     email = db.Column(db.String(50))
-    data_de_cadastro = db.Column(db.Date)
+    registration_date = db.Column(db.Date)
     checkInUser = db.relationship("CheckIn", backref="users", lazy=True)

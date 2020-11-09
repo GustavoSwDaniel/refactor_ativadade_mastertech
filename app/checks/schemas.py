@@ -4,14 +4,14 @@ from app.checks.models import CheckIn
 
 class CheckSchema(Schema):
     id_pont = fields.Integer(data_key="id_point")
-    usuario_responsavel = fields.String(
+    responsible_user = fields.String(
         validate=validate.Length(max=255),
         required=True,
-        data_key="usario_responsavel",
+        data_key="responsible_user",
     )
 
-    tipo_da_batida = fields.String(required=True)
-    data_hora_batida = fields.DateTime()
+    point_type = fields.String(required=True)
+    point_date_time = fields.DateTime()
     user_id = fields.Integer()
 
     @post_load
