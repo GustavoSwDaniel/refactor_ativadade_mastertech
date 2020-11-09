@@ -14,7 +14,7 @@ def check_point(user_id):
     return confirmation
 
 
-@bp.route("/checks/<int:user_id>", methods=["GET"])
+@bp.route("/point/<int:user_id>", methods=["GET"])
 def list_checks(user_id):
     check_hours = check_services.worked_hour(user_id)
     return check_hours

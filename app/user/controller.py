@@ -10,7 +10,7 @@ from app.user.models import User
 schema = user_schemas.UserSchema()
 
 
-@bp.route("/cadastro", methods=["POST"])
+@bp.route("/user", methods=["POST"])
 def register_user():
 
     user = schema.load(request.json)
@@ -28,19 +28,21 @@ def list_users():
 
 @bp.route("/user/<int:user_id>", methods=["GET"])
 def find_user(user_id):
+
     user = user_services.find_user(user_id)
     return user
 
 
-@bp.route("/updade/<int:user_id>", methods=["PUT"])
+@bp.route("/user/<int:user_id>", methods=["PUT"])
 def update_user(user_id):
     scheme_update = user_schemas.UpdateUserSchema()
     update = scheme_update.load(request.json)
+
     confirmation = user_services.updade_user(user_id, update)
     return confirmation
 
 
-@bp.route("/delete/<int:user_id>", methods=["DELETE"])
+@bp.route("/user/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     status_delete = user_services.delete_user(user_id)
     return status_delete
