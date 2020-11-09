@@ -5,26 +5,25 @@ from flask import jsonify
 
 from app import db
 from app.user.models import User
+from app.commons.errors import DublicateUserError
 from app.user import schemas as user_schemas
+
 
 schema = user_schemas.UserSchema()
 
 
 def register_user(user: list):
     user.cpf = format_cpf(user.cpf)
-    try:
-        user_object = save_user(user)
-        return jsonify(schema.dump(user_object))
-    except Exception:
-        return {"message": "Internal Error"}, 500
 
+    if find_exist_user_cpf(user.cpf):
+        raise DublicateUserError(massage="User already registered")
 
-def search_user(id_user: int) -> User:
-    return User.query.filter_by(id_user=id_user).first()
+    user_object = save_user(user)
+    return jsonify(schema.dump(user_object))
 
 
 def save_user(user: User) -> User:
-    user.data_de_cadastro = date.today()
+    user.registration_date = date.today()
     db.session.add(user)
     db.session.commit()
     return user
@@ -45,8 +44,8 @@ def updade_user(id_user: int, update: dict):
 
     if user_found:
         for key, value in update.items():
-            if key == "nome_completo":
-                user_found.nome_completo = value
+            if key == "full_name":
+                user_found.full_name = value
             elif key == "email":
                 user_found.email = value
             elif key == "cpf":
@@ -71,3 +70,7 @@ def find_user(id_user: int) -> User:
     if user:
         return jsonify(schema.dump(user)), 200
     return {"message": "User not Found"}, 404
+
+
+def search_user(id: int) -> User:
+    return User.query.filter_by(id=id).first()

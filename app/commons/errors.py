@@ -7,11 +7,6 @@ class BasicError(Exception):
         self.message = message
 
 
-class InvalidCpfError(BasicError):
-    def __init__(self, message="Invalid CPF"):
-        super().__init__(message)
-
-
 class DublicateUserError(BasicError):
     def __init__(
         self,

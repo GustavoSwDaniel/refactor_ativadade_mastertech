@@ -13,13 +13,13 @@ FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 
 
 def register_check_User(id_user: int, point_data: CheckIn):
-    point_data.data_hora_batida = datetime.now()
+    point_data.point_date_time = datetime.now()
     user = find_user(id_user)
 
     if user:
         check_user = schemas.dump(point_data)
         validate = validadete_check(
-            check_user["tipo_da_batida"],
+            check_user["point_type"],
             id_user,
         )
         if validate:
@@ -34,16 +34,16 @@ def register_check_User(id_user: int, point_data: CheckIn):
 def worked_hour(id_user: int):
     user = find_user(id_user)
     if user:
-        user_dados = read_checks_dada(id_user)
+        user_dadas = read_checks_dada(id_user)
 
         work_hours = []
-        for hours in user_dados:
-            if "data_hora_batida" in hours:
-                work_hours.append(hours["data_hora_batida"])
+        for hours in user_dadas:
+            if "point_date_time" in hours:
+                work_hours.append(hours["point_date_time"])
         work_hours.sort()
         total_hours = calculate_hours(work_hours)
         return jsonify(
-            {"Total de Horas trabalhadas": total_hours[0:7]},
+            {"Total de Horas trabalhadas": total_hours},
             [
                 schemas.dump(check)
                 for check in CheckIn.query.filter_by(user_id=id_user).all()
@@ -60,8 +60,8 @@ def calculate_hours(work_hours: list) -> str:
         for i in range(0, size, 2):
             entry = datetime.strptime(work_hours[i], FORMAT)
             out = datetime.strptime(work_hours[i + 1], FORMAT)
-            hours = out - entry
-        hours = str(hours)
+            hours += out - entry
+        hours = hours.strftime("%H:%M:%S")
         return hours
     else:
         work_hours.pop()
@@ -73,9 +73,9 @@ def validadete_check(type_point: str, id_user: int) -> bool:
     last_check = read_checks_dada(id_user)
     if last_check:
         last_check = last_check[-1]
-        if last_check["tipo_da_batida"] == "Saida" and type_point == "Saida":
+        if last_check["point_type"] == "Saida" and type_point == "Saida":
             return False
-        elif last_check["tipo_da_batida"] == "Entrada" and type_point == "Entrada":
+        elif last_check["point_type"] == "Entrada" and type_point == "Entrada":
             return False
         else:
             return True
