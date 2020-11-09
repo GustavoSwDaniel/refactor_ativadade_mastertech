@@ -15,7 +15,7 @@ def register_user():
 
     user = schema.load(request.json)
     if user_services.find_exist_user_cpf(cpf=user.cpf):
-        abort(400, "CPF already in use")
+        abort(400, "CPF already in use!")
 
     services = user_services.register_user(user)
     return services
